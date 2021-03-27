@@ -1,1 +1,14 @@
-// TODO
+.header {
+  width: 100%;
+  max-width: 720px;
+  height: 106px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 239px;
+    height: 26px;
+    cursor: pointer;
+  }
+}
