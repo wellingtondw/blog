@@ -18,10 +18,12 @@ import Header from '../../components/Header';
 import { useEffect, useState } from 'react';
 
 interface Post {
+  uid: string;
   first_publication_date: string | null;
   data: {
     title: string;
-    main: {
+    subtitle: string;
+    banner: {
       url: string;
     };
     author: string;
@@ -63,14 +65,22 @@ export default function Post({ post }: PostProps) {
         <title>{post.data.title} | Blog</title>
       </Head>
       <Header />
-      <img src={post.data.main.url} alt='Imagem de inicio do post' className={styles.banner} />
+      <img src={post.data.banner.url} alt='Imagem de inicio do post' className={styles.banner} />
       <main>
         <article className={styles.post}>
           <h1>{post.data.title}</h1>
           <div>
             <time>
               <FiCalendar size='20' color='#BBBBBB'/>
-              {post.first_publication_date}
+              {
+                format(
+                  new Date(post.first_publication_date),
+                  "dd LLL yyyy",
+                  {
+                    locale: ptBR
+                  }
+                )
+              }
             </time>
 
             <p>
@@ -122,21 +132,17 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
-  const { first_publication_date, data } = response
+  const { first_publication_date, uid, data } = response
 
   const post: Post = {
-    first_publication_date: format(
-      new Date(first_publication_date),
-      "dd LLL yyyy",
-      {
-        locale: ptBR
-      }
-    ),
+    uid,
+    first_publication_date,
     data: {
-      main: {
-        url:  data.main.url
+      banner: {
+        url:  data.banner.url
       },
       title: data.title,
+      subtitle: data.subtitle,
       author: data.author,
       content: data.content
     }

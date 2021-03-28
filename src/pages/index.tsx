@@ -60,7 +60,15 @@ export default function Home({ postsPagination }: HomeProps) {
               <div>
                 <time>
                   <FiCalendar size='20' color='#BBBBBB'/>
-                  {post.first_publication_date}
+                  {
+                    format(
+                      new Date(post.first_publication_date),
+                      "dd LLL yyyy",
+                      {
+                        locale: ptBR
+                      }
+                    )
+                  }
                 </time>
                 <p>
                   <FiUser size='20' color='#BBBBBB'/>
@@ -90,13 +98,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: format(
-        new Date(post.first_publication_date),
-        "dd LLL yyyy",
-        {
-          locale: ptBR
-        }
-      ),
+      first_publication_date:post.first_publication_date,
       data: {
         author: post.data.author,
         title: post.data.title,
