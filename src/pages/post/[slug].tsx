@@ -50,7 +50,7 @@ export default function Post({ post }: PostProps) {
 
   useEffect(() => {
     const numberOfLetters = post.data.content.reduce((accumulator, currentValue) => {
-      const result = RichText.asText(currentValue.body) + currentValue.heading
+      const result = RichText.asText(currentValue.body).split(' ')
       return accumulator += result.length
     }, 0)
 
