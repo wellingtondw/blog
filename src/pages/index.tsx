@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next'
 import Link from 'next/link'
+import Head from 'next/head'
 
 import { format } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
@@ -11,6 +12,7 @@ import { FiCalendar, FiUser } from 'react-icons/fi'
 import commonStyles from '../styles/common.module.scss'
 import styles from './home.module.scss'
 import { useState } from 'react'
+import Header from '../components/Header'
 
 interface Post {
   uid?: string
@@ -44,29 +46,35 @@ export default function Home({ postsPagination }: HomeProps) {
   }
 
   return (
-    <div className={styles.container}>
-      {posts.map(post => (
-        <Link href={`posts/${post.uid}`} key={post.uid}>
-          <a>
-            <h2>{post.data.title}</h2>
-            <h3>{post.data.subtitle}</h3>
-            <div>
-              <time>
-                <FiCalendar size='20' color='#BBBBBB'/>
-                {post.first_publication_date}
-              </time>
-              <p>
-                <FiUser size='20' color='#BBBBBB'/>
-                {post.data.author}
-              </p>
-            </div>
-          </a>
-        </Link>
-      ))}
-      {nextPage && (
-        <button className={styles.loadMore} onClick={handleGetMorePosts}>Carregar mais posts</button>
-      )}
-    </div>
+    <>
+      <Head>
+          <title>Posts | Blog</title>
+      </Head>
+      <Header />
+      <div className={styles.container}>
+        {posts.map(post => (
+          <Link href={`post/${post.uid}`} key={post.uid}>
+            <a href={`post/${post.uid}`}>
+              <h2>{post.data.title}</h2>
+              <h3>{post.data.subtitle}</h3>
+              <div>
+                <time>
+                  <FiCalendar size='20' color='#BBBBBB'/>
+                  {post.first_publication_date}
+                </time>
+                <p>
+                  <FiUser size='20' color='#BBBBBB'/>
+                  {post.data.author}
+                </p>
+              </div>
+            </a>
+          </Link>
+        ))}
+        {nextPage && (
+          <button className={styles.loadMore} onClick={handleGetMorePosts}>Carregar mais posts</button>
+        )}
+      </div>
+    </>
   )
 }
 
