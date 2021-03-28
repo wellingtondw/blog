@@ -11,7 +11,6 @@ import { RichText } from "prismic-dom"
 
 import { FiCalendar, FiUser , FiClock } from 'react-icons/fi'
 
-
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import Header from '../../components/Header';
@@ -65,8 +64,8 @@ export default function Post({ post }: PostProps) {
         <title>{post.data.title} | Blog</title>
       </Head>
       <Header />
-      <img src={post.data.banner.url} alt='Imagem de inicio do post' className={styles.banner} />
-      <main>
+      <div className={styles.banner} style={{ backgroundImage: `url(${post.data.banner.url})` }}/>
+      <main className={styles.container}>
         <article className={styles.post}>
           <h1>{post.data.title}</h1>
           <div>
@@ -97,9 +96,7 @@ export default function Post({ post }: PostProps) {
             return (
               <div className={styles.postContent} key={postContent.heading}>
                 <h2>{postContent.heading}</h2>
-                {postContent.body.map((post, index) => (
-                  <p key={index}>{post.text}</p>
-                ))}
+                <div dangerouslySetInnerHTML={{ __html: RichText.asHtml(postContent.body) }}/>
               </div>
             )
           })}
