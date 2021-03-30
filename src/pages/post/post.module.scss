@@ -53,3 +53,36 @@
     margin-bottom: 16px;
   }
 }
+
+.border {
+  border-top: 1px solid var(--body);
+  display: block;
+  width: 100%;
+  margin: 60px 0;
+  opacity: 0.1;
+}
+
+.containerPrevAndNextPosts {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 60px;
+  position: relative;
+
+  > div {
+    max-width: 300px;
+  }
+
+  a {
+    display: block;
+    margin-top: 8px;
+  }
+
+  .nextPost {
+    text-align: end;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}

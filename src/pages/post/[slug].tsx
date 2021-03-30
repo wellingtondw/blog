@@ -39,10 +39,12 @@ interface Post {
 
 interface PostProps {
   post: Post;
-  preview: boolean
+  preview: boolean;
+  prevPost: object[];
+  nextPost: object[];
 }
 
-export default function Post({ post, preview }: PostProps) {
+export default function Post({ post, preview, prevPost, nextPost }: PostProps) {
   const router = useRouter()
   const [postReadingTime, setPostReadingTime] = useState(0)
 
@@ -104,6 +106,30 @@ export default function Post({ post, preview }: PostProps) {
             )
           })}
         </article>
+
+        <div className={styles.border}/>
+
+        <div className={styles.containerPrevAndNextPosts}>
+          {prevPost.length > 0 && (
+            <div>
+              <p>{prevPost[0].data.title}</p>
+              <Link href={`/post/${prevPost[0].uid}`}>
+                <a className={commonStyles.loadMore}>Post anterior</a>
+              </Link>
+            </div>
+          )}
+
+          {nextPost.length > 0 && (
+            <div className={styles.nextPost}>
+              <p>{nextPost[0].data.title}</p>
+              <Link href={`/post/${nextPost[0].uid}`}>
+                <a className={commonStyles.loadMore}>Próximo post</a>
+              </Link>
+            </div>
+          )}
+
+        </div>
+
         <Comments />
         {preview && (
           <aside className={commonStyles.exitPreviewMode}>
@@ -146,7 +172,22 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref ?? null
   });
 
+
   const { first_publication_date, uid, data } = response
+
+  const prevPost = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts')
+  ], {
+    after: response.id,
+    orderings : '[document.last_publication_date desc]'
+  })
+
+  const nextPost = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts')
+  ], {
+    after: response.id,
+    orderings : '[document.last_publication_date]'
+  })
 
   const post: Post = {
     uid,
@@ -166,7 +207,9 @@ export const getStaticProps: GetStaticProps = async ({
   return {
     props: {
       post,
-      preview
+      preview,
+      prevPost: prevPost.results,
+      nextPost: nextPost.results
     },
     revalidate: 60 * 60 // 1 hour
   }

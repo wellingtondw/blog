@@ -80,7 +80,7 @@ export default function Home({ postsPagination, preview }: HomeProps) {
           </Link>
         ))}
         {nextPage && (
-          <button className={styles.loadMore} onClick={handleGetMorePosts}>Carregar mais posts</button>
+          <button className={commonStyles.loadMore} onClick={handleGetMorePosts}>Carregar mais posts</button>
         )}
 
         {preview && (
@@ -105,7 +105,8 @@ export const getStaticProps: GetStaticProps = async ({
   ], {
     fetch: ['posts.title', 'posts.author', 'posts.subtitle', 'posts.content', 'post.next_page'],
     pageSize : 2,
-    ref: previewData?.ref ?? null
+    ref: previewData?.ref ?? null,
+    orderings : '[document.last_publication_date desc]'
   })
 
   const posts = postsResponse.results.map(post => {
