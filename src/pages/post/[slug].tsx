@@ -16,6 +16,7 @@ import styles from './post.module.scss';
 import Header from '../../components/Header';
 import { useEffect, useState } from 'react';
 import { Comments } from '../../components/Comments';
+import Link from 'next/link';
 
 interface Post {
   uid: string;
@@ -38,9 +39,10 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, preview }: PostProps) {
   const router = useRouter()
   const [postReadingTime, setPostReadingTime] = useState(0)
 
@@ -102,8 +104,15 @@ export default function Post({ post }: PostProps) {
             )
           })}
         </article>
+        <Comments />
+        {preview && (
+          <aside className={commonStyles.exitPreviewMode}>
+            <Link href="/api/exit-preview">
+              <a>Sair do modo Preview</a>
+            </Link>
+          </aside>
+        )}
       </main>
-      <Comments />
     </>
   )
 }
@@ -126,12 +135,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData
+ }) => {
   const { slug } = params
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
-
-  console.log(response.data.content)
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null
+  });
 
   const { first_publication_date, uid, data } = response
 
@@ -152,7 +165,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
-      post
+      post,
+      preview
     },
     revalidate: 60 * 60 // 1 hour
   }

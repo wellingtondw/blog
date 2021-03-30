@@ -84,7 +84,7 @@ export default function Home({ postsPagination, preview }: HomeProps) {
         )}
 
         {preview && (
-          <aside>
+          <aside className={commonStyles.exitPreviewMode}>
             <Link href="/api/exit-preview">
               <a>Sair do modo Preview</a>
             </Link>
@@ -97,7 +97,7 @@ export default function Home({ postsPagination, preview }: HomeProps) {
 
 export const getStaticProps: GetStaticProps = async ({
   preview = false,
-  previewData = {},
+  previewData,
 }) => {
   const prismic = getPrismicClient()
   const postsResponse = await prismic.query([

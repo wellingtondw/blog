@@ -18,8 +18,6 @@ const Preview = async (req, res) => {
     return res.status(401).json({ message: "Invalid token" });
   }
 
-  console.log('Req', ref)
-
   res.setPreviewData({ ref });
   res.writeHead(302, { Location: `${redirectUrl}`  })
   res.end();
