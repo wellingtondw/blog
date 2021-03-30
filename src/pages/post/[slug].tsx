@@ -37,11 +37,18 @@ interface Post {
   };
 }
 
+interface PrevNextPost {
+  data: {
+    title,
+  },
+  uid: string
+}
+
 interface PostProps {
   post: Post;
   preview: boolean;
-  prevPost: object[];
-  nextPost: object[];
+  prevPost: PrevNextPost[];
+  nextPost: PrevNextPost[];
 }
 
 export default function Post({ post, preview, prevPost, nextPost }: PostProps) {
