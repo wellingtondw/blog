@@ -31,9 +31,10 @@ interface PostPagination {
 
 interface HomeProps {
   postsPagination: PostPagination
+  preview: boolean
 }
 
-export default function Home({ postsPagination }: HomeProps) {
+export default function Home({ postsPagination, preview }: HomeProps) {
   const [nextPage, setNextPage] = useState(postsPagination.next_page)
   const [posts, setPosts] = useState<Post[]>([...postsPagination.results])
 
@@ -81,18 +82,30 @@ export default function Home({ postsPagination }: HomeProps) {
         {nextPage && (
           <button className={styles.loadMore} onClick={handleGetMorePosts}>Carregar mais posts</button>
         )}
+
+        {preview && (
+          <aside>
+            <Link href="/api/exit-preview">
+              <a>Sair do modo Preview</a>
+            </Link>
+          </aside>
+        )}
       </div>
     </>
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async ({
+  preview = false,
+  previewData = {},
+}) => {
   const prismic = getPrismicClient()
   const postsResponse = await prismic.query([
     Prismic.predicates.at('document.type', 'posts')
   ], {
     fetch: ['posts.title', 'posts.author', 'posts.subtitle', 'posts.content', 'post.next_page'],
-    pageSize : 2
+    pageSize : 2,
+    ref: previewData?.ref ?? null
   })
 
   const posts = postsResponse.results.map(post => {
@@ -111,7 +124,8 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       postsPagination: {
         results: posts,
-        next_page: postsResponse.next_page
+        next_page: postsResponse.next_page,
+        preview
       }
     },
     revalidate: 60 * 60 // 1 hour
